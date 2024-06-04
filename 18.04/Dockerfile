@@ -1,4 +1,4 @@
-# Copyright 2019-2020, Burkhard Stubert (DBA Embedded Use)
+# Copyright 2024, Viarenich Uladzislau
 
 # The parent directory contains two helper scripts to build and run the Docker image.
 #
@@ -33,6 +33,15 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
     build-essential chrpath socat cpio python python3 python3-pip python3-pexpect \
     xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev \
     pylint3 xterm git-lfs
+    
+# Install Python3.8, required  by yocto version
+RUN apt-get install -y software-properties-common
+RUN apt-get update
+RUN add-apt-repository ppa:deadsnakes/ppa
+RUN apt-get update
+RUN apt-get install -y python3.8 
+RUN rm /usr/bin/python3
+RUN ln -s /usr/bin/python3.8 /usr/bin/python3
 
 # These packages are not needed for the Yocto build but in this file below.
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
@@ -75,5 +84,4 @@ RUN groupadd -g $host_gid $USER_NAME && useradd -g $host_gid -m -s /bin/bash -u 
 USER $USER_NAME
 
 WORKDIR /public/Work
-
 
