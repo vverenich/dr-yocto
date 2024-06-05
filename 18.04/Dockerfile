@@ -43,6 +43,10 @@ RUN apt-get install -y python3.8
 RUN rm /usr/bin/python3
 RUN ln -s /usr/bin/python3.8 /usr/bin/python3
 
+# Install zlib and liblz4-tool
+RUN apt update && apt install -y zstd liblz4-tool 
+
+
 # These packages are not needed for the Yocto build but in this file below.
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
     locales sudo
