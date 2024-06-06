@@ -35,6 +35,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
     pylint3 xterm git-lfs
 
 # Install GCC-13, G++-13
+RUN apt remove python3-apt
+RUN apt install python3-apt
 RUN add-apt-repository ppa:ubuntu-toolchain-r/test
 RUN apt -y update
 RUN apt -y install gcc-13 g++-13
