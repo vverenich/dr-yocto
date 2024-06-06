@@ -34,6 +34,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
     xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev \
     pylint3 xterm git-lfs
 
+# Install GCC-13, G++-13
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test
+RUN apt -y update
+RUN apt -y install gcc-13 g++-13
+RUN ln -sf  /usr/bin/gcc-13 /usr/bin/gcc
+RUN ln -sf  /usr/bin/g++-13 /usr/bin/g++
 
 # Install Python3.8, required  by yocto version
 RUN apt-get install -y software-properties-common
@@ -46,13 +52,6 @@ RUN ln -s /usr/bin/python3.8 /usr/bin/python3
 
 # Install zlib and liblz4-tool
 RUN apt update && apt install -y zstd liblz4-tool 
-
-# Install GCC-13, G++-13
-RUN add-apt-repository ppa:ubuntu-toolchain-r/test
-RUN apt -y update
-RUN apt -y install gcc-13 g++-13
-RUN ln -sf  /usr/bin/gcc-13 /usr/bin/gcc
-RUN ln -sf  /usr/bin/g++-13 /usr/bin/g++
 
 # These packages are not needed for the Yocto build but in this file below.
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
