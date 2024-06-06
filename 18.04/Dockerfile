@@ -47,7 +47,7 @@ RUN ln -s /usr/bin/python3.8 /usr/bin/python3
 RUN apt update && apt install -y zstd liblz4-tool 
 
 # Install GCC-13, G++-13
-RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test
 RUN apt -y update
 RUN apt -y install gcc-13 g++-13
 RUN ln -sf  /usr/bin/gcc-13 /usr/bin/gcc
