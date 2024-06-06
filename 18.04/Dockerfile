@@ -37,6 +37,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
 # Install GCC-13, G++-13
 RUN apt remove -y python3-apt
 RUN apt install -y python3-apt
+RUN apt update
+RUN apt-get install -y software-properties-common
 RUN add-apt-repository ppa:ubuntu-toolchain-r/test
 RUN apt -y update
 RUN apt -y install gcc-13 g++-13
@@ -96,4 +98,3 @@ RUN groupadd -g $host_gid $USER_NAME && useradd -g $host_gid -m -s /bin/bash -u 
 USER $USER_NAME
 
 WORKDIR /public/Work
-
