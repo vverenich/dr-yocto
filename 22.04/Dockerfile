@@ -7,19 +7,19 @@
 # builds a Docker image with the name "dr-yocto" and the tag "<tag>" ("dr-yocto:<tag>", for
 # short) from the Dockerfile found in <dir-path>. If you are in the parent directory of this
 # file, you can call
-#     ./build.sh 18.04 ./18.04
-# to build the image "dr-yocto:18.04".
+#     ./build.sh 22.04 ./22.04
+# to build the image "dr-yocto:22.04".
 #
 # The script
 #     run-shell.sh <tag>
 # runs the Docker image "dr-yocto:<tag>" just built. For example,
-#     run-shell.sh 18.04
-# runs the Docker image "dr-yocto:18.04".
+#     run-shell.sh 22.04
+# runs the Docker image "dr-yocto:22.04".
 #
 # Note that you can use any string for <tag>. It need not be the name of a Ubuntu version.
 
-# Use Ubuntu 18.04 LTS (Bionic Beaver) as the basis for the Docker image.
-FROM ubuntu:18.04
+# Use Ubuntu 22.04 LTS (Bionic Beaver) as the basis for the Docker image.
+FROM ubuntu:22.04
 
 # Install all Linux packages required for Yocto builds as given in section "Build Host Packages"
 # on https://www.yoctoproject.org/docs/3.0.2/brief-yoctoprojectqs/brief-yoctoprojectqs.html.
@@ -30,9 +30,9 @@ FROM ubuntu:18.04
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
     gawk wget git-core diffstat unzip texinfo gcc-multilib \
-    build-essential chrpath socat cpio python python3 python3-pip python3-pexpect \
+    build-essential chrpath socat cpio python3 python3-pip python3-pexpect \
     xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev \
-    pylint3 xterm git-lfs
+    pylint xterm git-lfs
 
 # Install GCC-13, G++-13
 RUN apt remove -y python3-apt
@@ -48,7 +48,7 @@ RUN ln -sf  /usr/bin/g++-13 /usr/bin/g++
 # Install Python3.8, required  by yocto version
 RUN apt-get install -y software-properties-common
 RUN apt-get update
-#RUN add-apt-repository ppa:deadsnakes/ppa
+RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get update
 RUN apt-get install -y python3.8 
 RUN rm /usr/bin/python3
@@ -56,6 +56,9 @@ RUN ln -s /usr/bin/python3.8 /usr/bin/python3
 
 # Install zlib and liblz4-tool
 RUN apt update && apt install -y zstd liblz4-tool 
+
+# Install python-distutils
+RUN apt-get install python3-distutils
 
 # These packages are not needed for the Yocto build but in this file below.
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
@@ -78,7 +81,7 @@ ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
 
 # Add user "embeddeduse" to sudoers. Then, the user can install Linux packages in the container.
-ENV USER_NAME=embeddeduse
+ENV USER_NAME=verenich
 RUN echo "${USER_NAME} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/${USER_NAME} && \
     chmod 0440 /etc/sudoers.d/${USER_NAME}
 
@@ -87,14 +90,14 @@ RUN echo "${USER_NAME} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/${USER_NAME} &&
 # group ID owning the host directories. The host_uid and group_uid are passed to the docker build
 # command with the --build-arg option. By default, they are both 1001. The docker image creates
 # a group with host_gid and a user with host_uid and adds the user to the group. The symbolic
-# name of the group and user is embeddeduse.
+# name of the group and user is verenich.
 ARG host_uid=1001
 ARG host_gid=1001
 RUN groupadd -g $host_gid $USER_NAME && useradd -g $host_gid -m -s /bin/bash -u $host_uid $USER_NAME
 
-# Perform the Yocto build as user embeddeduse (not as root).
+# Perform the Yocto build as user verenich (not as root).
 # By default, docker runs as root. However, Yocto builds should not be run as root, but as a 
-# normal user. Hence, we switch to the newly created user embeddeduse.
+# normal user. Hence, we switch to the newly created user verenich.
 USER $USER_NAME
 
 WORKDIR /public/Work
